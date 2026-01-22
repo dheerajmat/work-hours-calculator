@@ -168,14 +168,6 @@ function getDateKey(d: Date): string {
 }
 
 /**
- * Check if a date is today
- */
-function isToday(date: Date): boolean {
-  const today = new Date();
-  return getDateKey(date) === getDateKey(today);
-}
-
-/**
  * Calculate leave by time for today if currently working
  * Returns the time when the 8-hour goal will be reached
  */

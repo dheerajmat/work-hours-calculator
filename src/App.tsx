@@ -6,12 +6,10 @@ import {
   parsePunches,
   computeDailySummary,
   calculateOverallStats,
-  formatHoursMinutesSeconds,
   formatHoursMinutes,
   DaySummary,
 } from './utils/timeParser';
 import { ERPConfig, ERPClient, loadERPConfig } from './utils/erpClient';
-import { convertERPJSONToLogFormat, isJSONFormat } from './utils/jsonParser';
 
 // Local storage keys
 const STORAGE_KEYS = {
