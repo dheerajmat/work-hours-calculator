@@ -1,5 +1,5 @@
 import React from 'react';
-import { DaySummary } from '../utils/timeParser';
+import { DaySummary, formatHoursMinutes } from '../utils/timeParser';
 import TimelineCycle from './TimelineCycle';
 
 interface DailyBreakdownProps {
@@ -89,7 +89,7 @@ const DailyBreakdown: React.FC<DailyBreakdownProps> = ({ summary, compact = fals
                 </div>
                 <div className="text-right">
                   <span className="text-primary-400 font-semibold text-xs">
-                    {interval.durationHours.toFixed(2)}h
+                    {formatHoursMinutes(interval.durationHours)}
                   </span>
                 </div>
               </div>
@@ -114,7 +114,7 @@ const DailyBreakdown: React.FC<DailyBreakdownProps> = ({ summary, compact = fals
                   {interval.start} → {interval.end}
                 </span>
                 <span className="text-primary-400 font-semibold">
-                  {interval.durationHours.toFixed(2)}h
+                  {formatHoursMinutes(interval.durationHours)}
                 </span>
               </div>
             ))}

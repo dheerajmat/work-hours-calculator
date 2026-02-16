@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { DaySummary } from '../utils/timeParser';
+import { DaySummary, formatHoursMinutes } from '../utils/timeParser';
 
 interface TimelineCycleProps {
   summary: DaySummary;
@@ -352,7 +352,7 @@ const TimelineCycle: React.FC<TimelineCycleProps> = ({ summary }) => {
                               </div>
                             </div>
                             <span className="text-primary-400 font-bold text-sm">
-                              {interval.durationHours.toFixed(2)}h
+                              {formatHoursMinutes(interval.durationHours)}
                             </span>
                           </div>
                         </div>
@@ -398,7 +398,7 @@ const TimelineCycle: React.FC<TimelineCycleProps> = ({ summary }) => {
                                   </div>
                                 </div>
                                 <span className="text-amber-400 font-bold text-sm">
-                                  {duration.toFixed(2)}h
+                                  {formatHoursMinutes(duration)}
                                 </span>
                               </div>
                             </div>
