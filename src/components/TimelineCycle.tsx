@@ -36,6 +36,12 @@ const TimelineCycle: React.FC<TimelineCycleProps> = ({ summary }) => {
 
   const breaks = getBreaks();
 
+  // Calculate total work time
+  const totalWorkTime = summary.intervals.reduce((sum, interval) => sum + interval.durationHours, 0);
+
+  // Calculate total break time
+  const totalBreakTime = breaks.reduce((sum, breakPeriod) => sum + (breakPeriod.end - breakPeriod.start), 0);
+
   // Check if a time falls within a work session
   const isInWorkSession = (hour: number): { inSession: boolean; sessionIndex: number } => {
     for (let i = 0; i < summary.intervals.length; i++) {
@@ -101,19 +107,35 @@ const TimelineCycle: React.FC<TimelineCycleProps> = ({ summary }) => {
                 </button>
               </div>
 
-              {/* Legend - Compact */}
-              <div className="flex items-center gap-4 mt-2 text-xs">
-                <div className="flex items-center gap-1.5">
-                  <div className="w-3 h-3 bg-green-500 rounded-full shadow-lg shadow-green-500/50"></div>
-                  <span className="text-slate-300">Work</span>
+              {/* Legend and Totals - Compact */}
+              <div className="flex items-center justify-between mt-3 gap-4">
+                <div className="flex items-center gap-4 text-xs">
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-3 h-3 bg-green-500 rounded-full shadow-lg shadow-green-500/50"></div>
+                    <span className="text-slate-300">Work</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-3 h-3 bg-amber-500 rounded-full shadow-lg shadow-amber-500/50"></div>
+                    <span className="text-slate-300">Break</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-3 h-3 bg-slate-700 rounded-full"></div>
+                    <span className="text-slate-300">Inactive</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <div className="w-3 h-3 bg-amber-500 rounded-full shadow-lg shadow-amber-500/50"></div>
-                  <span className="text-slate-300">Break</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <div className="w-3 h-3 bg-slate-700 rounded-full"></div>
-                  <span className="text-slate-300">Inactive</span>
+                
+                {/* Total Times */}
+                <div className="flex items-center gap-3 text-xs">
+                  <div className="flex items-center gap-1.5 bg-green-500/10 border border-green-500/30 rounded-lg px-2 py-1">
+                    <span className="text-slate-400">Total Work:</span>
+                    <span className="text-green-400 font-bold">{formatHoursMinutes(totalWorkTime)}</span>
+                  </div>
+                  {totalBreakTime > 0 && (
+                    <div className="flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/30 rounded-lg px-2 py-1">
+                      <span className="text-slate-400">Total Break:</span>
+                      <span className="text-amber-400 font-bold">{formatHoursMinutes(totalBreakTime)}</span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
