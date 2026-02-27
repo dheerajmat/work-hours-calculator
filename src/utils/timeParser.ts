@@ -13,13 +13,20 @@ export type WorkInterval = {
 export type DaySummary = {
   date: string; // 'YYYY-MM-DD'
   name: string;
-  totalHours: number;
+  totalHours: number; // Total office span (first IN to last OUT) including breaks
   totalFormatted: string; // 'Xh Ym'
+  actualWorkHours: number; // Sum of work intervals (excluding breaks)
+  actualWorkFormatted: string; // 'Xh Ym'
+  breakHours: number; // Total break time
+  breakFormatted: string; // 'Xh Ym'
+  breakExceeded: boolean; // true if break > 1 hour
   intervals: WorkInterval[];
-  remaining: number; // hours remaining to reach 8h goal (negative if overtime)
+  remaining: number; // hours remaining to reach 9h office time goal
   remainingFormatted: string;
   remainingFormattedWithSeconds: string; // 'Xh Ym Zs' with live seconds
-  isOvertime: boolean;
+  overtimeHours: number; // Overtime hours (actualWorkHours - 8, if > 8)
+  overtimeFormatted: string; // 'Xh Ym'
+  isOvertime: boolean; // true if actualWorkHours > 8
   isToday: boolean;
   currentlyWorking: boolean;
   leaveByTime?: string; // Only for today if currently working
@@ -167,23 +174,6 @@ function getDateKey(d: Date): string {
   return `${y}-${m}-${day}`;
 }
 
-/**
- * Calculate leave by time for today if currently working
- * Returns the time when the 8-hour goal will be reached
- */
-function calculateLeaveByTime(lastInTime: Date, hoursWorkedBefore: number): string {
-  const GOAL_HOURS = 8;
-  const remainingHours = GOAL_HOURS - hoursWorkedBefore;
-  
-  // If already met or exceeded goal before current session, return last IN time
-  if (remainingHours <= 0) {
-    return timeStr12Hour(lastInTime);
-  }
-  
-  // Calculate when goal will be reached from last IN time
-  const leaveTime = new Date(lastInTime.getTime() + remainingHours * 60 * 60 * 1000);
-  return timeStr12Hour(leaveTime);
-}
 
 /**
  * Compute daily summaries from punch records
@@ -194,7 +184,7 @@ export function computeDailySummary(
 ): DaySummary[] {
   if (!records.length) return [];
 
-  const GOAL_HOURS = 8;
+  const GOAL_HOURS = 9;
   const now = new Date();
   const todayKey = getDateKey(now);
 
@@ -220,18 +210,19 @@ export function computeDailySummary(
 
     const intervals: WorkInterval[] = [];
     let lastIn: Date | null = null;
-    let totalHours = 0;
+    let actualWorkHours = 0; // Sum of work intervals (excluding breaks)
     const isTodayDate = dateKey === todayKey;
     let currentlyWorking = false;
-    let lastInTime: Date | null = null;
-    let hoursBeforeCurrentSession = 0; // Track hours worked before current session
+    let firstInTime: Date | null = null;
+    let lastOutTime: Date | null = null;
 
     // Process IN/OUT pairs
     for (const r of dayRecords) {
       if (r.direction === "IN") {
+        if (!firstInTime) firstInTime = r.datetime; // Track first IN
         lastIn = r.datetime;
-        lastInTime = r.datetime;
       } else if (r.direction === "OUT" && lastIn) {
+        lastOutTime = r.datetime; // Track last OUT
         const diffMs = r.datetime.getTime() - lastIn.getTime();
         if (diffMs > 0) {
           const durationHours = diffMs / (1000 * 60 * 60);
@@ -240,8 +231,7 @@ export function computeDailySummary(
             end: timeStr(r.datetime),
             durationHours: round2(durationHours),
           });
-          totalHours += durationHours;
-          hoursBeforeCurrentSession = totalHours; // Update before current session
+          actualWorkHours += durationHours;
         }
         lastIn = null;
       }
@@ -258,30 +248,64 @@ export function computeDailySummary(
           end: "Now",
           durationHours: round2(durationHours),
         });
-        totalHours += durationHours;
+        actualWorkHours += durationHours;
       }
     }
 
+    // Calculate total office span (first IN to last OUT or NOW)
+    let totalHours = 0;
+    if (firstInTime) {
+      const endTime = currentlyWorking ? now : (lastOutTime || firstInTime);
+      const spanMs = endTime.getTime() - firstInTime.getTime();
+      totalHours = spanMs / (1000 * 60 * 60);
+    }
+
+    // Calculate break time
+    const breakHours = totalHours - actualWorkHours;
+    const MAX_BREAK_HOURS = 1;
+    const breakExceeded = breakHours > MAX_BREAK_HOURS;
+
+    // Calculate remaining office time (based on 9-hour office goal)
     const remaining = GOAL_HOURS - totalHours;
-    const isOvertime = remaining < 0;
+    
+    // Calculate overtime (based on 8-hour work threshold)
+    const OVERTIME_THRESHOLD = 8;
+    const overtimeHours = Math.max(0, actualWorkHours - OVERTIME_THRESHOLD);
+    const isOvertime = overtimeHours > 0;
 
     const summary: DaySummary = {
       date: dateKey,
       name: dayRecords[0]?.name || "Unknown",
       totalHours: round2(totalHours),
       totalFormatted: formatHoursMinutes(totalHours),
+      actualWorkHours: round2(actualWorkHours),
+      actualWorkFormatted: formatHoursMinutes(actualWorkHours),
+      breakHours: round2(breakHours),
+      breakFormatted: formatHoursMinutes(breakHours),
+      breakExceeded,
       intervals,
       remaining: round2(Math.abs(remaining)),
       remainingFormatted: formatHoursMinutes(Math.abs(remaining)),
       remainingFormattedWithSeconds: formatHoursMinutesSeconds(Math.abs(remaining)),
+      overtimeHours: round2(overtimeHours),
+      overtimeFormatted: formatHoursMinutes(overtimeHours),
       isOvertime,
       isToday: isTodayDate,
       currentlyWorking,
     };
 
     // Calculate leave by time if currently working today
-    if (currentlyWorking && lastInTime) {
-      summary.leaveByTime = calculateLeaveByTime(lastInTime, hoursBeforeCurrentSession);
+    if (currentlyWorking && firstInTime) {
+      // Calculate remaining office time needed
+      const remainingOfficeTime = GOAL_HOURS - totalHours;
+      if (remainingOfficeTime > 0) {
+        // Leave by = NOW + remaining time
+        const leaveByDate = new Date(now.getTime() + remainingOfficeTime * 60 * 60 * 1000);
+        summary.leaveByTime = timeStr12Hour(leaveByDate);
+      } else {
+        // Already completed goal
+        summary.leaveByTime = timeStr12Hour(now);
+      }
     }
 
     summaries.push(summary);
@@ -302,7 +326,7 @@ export function computeDailySummary(
  * Calculate overall statistics
  */
 export function calculateOverallStats(summaries: DaySummary[]) {
-  const GOAL_HOURS = 8;
+  const GOAL_HOURS = 9;
   const totalHours = summaries.reduce((sum, s) => sum + s.totalHours, 0);
   const daysTracked = summaries.length;
   const expectedHours = daysTracked * GOAL_HOURS;
@@ -333,7 +357,7 @@ export function calculateOverallStats(summaries: DaySummary[]) {
   // Calculate total overtime and total remaining
   const totalOvertime = summaries
     .filter(s => s.isOvertime)
-    .reduce((sum, s) => sum + s.remaining, 0);
+    .reduce((sum, s) => sum + s.overtimeHours, 0);
   const totalRemaining = summaries
     .filter(s => !s.isOvertime && s.remaining > 0)
     .reduce((sum, s) => sum + s.remaining, 0);

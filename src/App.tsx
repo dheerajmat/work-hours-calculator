@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import StatsCard from './components/StatsCard';
 import DailyBreakdown from './components/DailyBreakdown';
 import ERPSettings from './components/ERPSettings';
+import SummaryReport from './components/SummaryReport';
 import {
   parsePunches,
   computeDailySummary,
@@ -40,6 +41,9 @@ function App() {
   const [erpConfig, setErpConfig] = useState<ERPConfig | null>(null);
   const [fetchingFromERP, setFetchingFromERP] = useState(false);
   const [erpMessage, setErpMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  
+  // Summary Report state
+  const [showSummaryReport, setShowSummaryReport] = useState(false);
 
   // Load ERP config on mount
   useEffect(() => {
@@ -254,13 +258,28 @@ Approved
     <div className="min-h-screen bg-slate-950 py-6 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-slate-100 mb-2">
-            ⏱️ Work Hours Calculator
-          </h1>
-          <p className="text-slate-400 text-sm max-w-2xl mx-auto">
-            Parse your logs instantly. Calculate working hours, breaks, and detect anomalies.
-          </p>
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex-1">
+              <h1 className="text-3xl font-bold text-slate-100 mb-2">
+                ⏱️ Work Hours Calculator
+              </h1>
+              <p className="text-slate-400 text-sm">
+                Parse your logs instantly. Calculate working hours, breaks, and detect anomalies.
+              </p>
+            </div>
+            {summaries.length > 0 && (
+              <button
+                onClick={() => setShowSummaryReport(true)}
+                className="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-lg font-medium text-sm transition-all flex items-center gap-2 shadow-lg shadow-primary-500/30"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Summary Report
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Input Section */}
@@ -411,7 +430,7 @@ Approved
                 <div className="bg-slate-950/50 rounded-lg p-4 border border-slate-700">
                   <p className="text-slate-400 text-xs mb-1">🎯 Expected Hours</p>
                   <p className="text-3xl font-bold text-slate-300">{stats.expectedFormatted}</p>
-                  <p className="text-xs text-slate-500 mt-1">{stats.daysTracked} days × 8h</p>
+                  <p className="text-xs text-slate-500 mt-1">{stats.daysTracked} days × 9h</p>
                 </div>
                 
                 {/* Difference (Overtime/Remaining) */}
@@ -667,6 +686,13 @@ Approved
         isOpen={showERPSettings}
         onClose={() => setShowERPSettings(false)}
         onSave={handleERPConfigSave}
+      />
+      
+      {/* Summary Report Modal */}
+      <SummaryReport
+        isOpen={showSummaryReport}
+        onClose={() => setShowSummaryReport(false)}
+        summaries={summaries}
       />
     </div>
   );

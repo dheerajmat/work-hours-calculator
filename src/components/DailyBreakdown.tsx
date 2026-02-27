@@ -29,19 +29,40 @@ const DailyBreakdown: React.FC<DailyBreakdownProps> = ({ summary, compact = fals
           <p className={`${compact ? 'text-xl' : 'text-2xl'} font-bold text-slate-100`}>
             {summary.totalFormatted}
           </p>
-          <p className="text-xs text-slate-500">Total</p>
+          <p className="text-xs text-slate-500">Total Office Time</p>
+        </div>
+      </div>
+
+      {/* Work and Break Time Breakdown */}
+      <div className="grid grid-cols-2 gap-2 mb-3 pb-3 border-b border-slate-800">
+        <div className="bg-slate-800/50 rounded-lg p-2">
+          <p className="text-xs text-slate-400 mb-1">Work Time</p>
+          <p className="text-lg font-bold text-green-400">{summary.actualWorkFormatted}</p>
+        </div>
+        <div className={`rounded-lg p-2 ${
+          summary.breakExceeded 
+            ? 'bg-red-500/10 border border-red-500/30' 
+            : 'bg-slate-800/50'
+        }`}>
+          <p className="text-xs text-slate-400 mb-1">
+            Break Time {summary.breakExceeded && '⚠️'}
+          </p>
+          <p className={`text-lg font-bold ${
+            summary.breakExceeded ? 'text-red-400' : 'text-blue-400'
+          }`}>
+            {summary.breakFormatted}
+          </p>
+          {summary.breakExceeded && (
+            <p className="text-xs text-red-400 mt-1">Exceeds 1h limit</p>
+          )}
         </div>
       </div>
 
       {/* Goal Status - Enhanced with live updates */}
       <div className={`flex ${compact ? 'flex-col gap-2' : 'items-center gap-4'} mb-3 pb-3 border-b border-slate-800`}>
         <div className="flex items-center gap-2">
-          <span className="text-xs text-slate-400">Goal (8h)</span>
-          {summary.isOvertime ? (
-            <span className="badge-warning-compact">
-              {summary.remainingFormattedWithSeconds} Overtime
-            </span>
-          ) : summary.remaining === 0 ? (
+          <span className="text-xs text-slate-400">Office Time Goal (9h)</span>
+          {summary.remaining <= 0 ? (
             <span className="badge-success-compact animate-pulse">
               🎉 Goal Reached!
             </span>
@@ -52,7 +73,17 @@ const DailyBreakdown: React.FC<DailyBreakdownProps> = ({ summary, compact = fals
           )}
         </div>
         
-        {summary.currentlyWorking && summary.leaveByTime && (
+        {/* Show overtime if earned (actualWorkHours > 8) */}
+        {summary.isOvertime && (
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-slate-400">🔥 Overtime Earned</span>
+            <span className="badge-warning-compact">
+              {summary.overtimeFormatted}
+            </span>
+          </div>
+        )}
+        
+        {summary.currentlyWorking && summary.leaveByTime && summary.remaining > 0 && (
           <div className={`flex items-center gap-2 ${compact ? '' : 'ml-auto'}`}>
             <span className="text-xs text-slate-400">Leave by</span>
             <span className="bg-blue-500/10 text-blue-400 border border-blue-500/30 px-2 py-1 rounded-full text-xs font-semibold">
