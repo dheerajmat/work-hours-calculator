@@ -45,6 +45,23 @@ function App() {
   // Summary Report state
   const [showSummaryReport, setShowSummaryReport] = useState(false);
 
+  // Load data from URL hash if present (from Chrome extension)
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash.startsWith('#data=')) {
+      try {
+        const encoded = hash.slice(6);
+        const decoded = decodeURIComponent(escape(atob(encoded)));
+        if (decoded.trim()) {
+          setRawText(decoded);
+          window.history.replaceState(null, '', window.location.pathname);
+        }
+      } catch (e) {
+        console.error('Failed to decode URL data:', e);
+      }
+    }
+  }, []);
+
   // Load ERP config on mount
   useEffect(() => {
     const config = loadERPConfig();

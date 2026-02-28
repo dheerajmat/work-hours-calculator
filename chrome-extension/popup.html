@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>ERP Attendance</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <!-- ── Header ─────────────────────────── -->
+  <div class="header">
+    <span class="header-icon">⏱️</span>
+    <span class="header-title">NBL Work Calculator</span>
+  </div>
+
+  <!-- ── Tab bar ─────────────────────────── -->
+  <div class="tabs">
+    <button class="tab" id="tabCopy">📋 Copy</button>
+    <button class="tab active" id="tabToday">📊 Today</button>
+  </div>
+
+  <!-- ══════ View 1: Copy ══════ -->
+  <div id="viewCopy" class="view hidden">
+    <button id="extractBtn" class="btn-primary">📋 Copy Attendance Data</button>
+    <div id="status" class="status-msg"></div>
+    <div class="open-btns">
+      <button id="openV1" class="btn-open btn-v1">🚀 Open in V1</button>
+      <button id="openV2" class="btn-open btn-v2">✨ Open in V2</button>
+    </div>
+  </div>
+
+  <!-- ══════ View 2: Today ══════ -->
+  <div id="viewToday" class="view">
+    <!-- loading state -->
+    <div id="todayLoading" class="loading">
+      <div class="spinner"></div>
+      <span>Extracting today's data…</span>
+    </div>
+
+    <!-- error state -->
+    <div id="todayError" class="error-box hidden"></div>
+
+    <!-- dashboard (filled by JS) -->
+    <div id="todayDash" class="hidden">
+
+      <!-- name + status badge -->
+      <div class="emp-row" id="empRow"></div>
+
+      <!-- main stat cards -->
+      <div class="stat-grid" id="statGrid"></div>
+
+      <!-- goal bar -->
+      <div id="goalSection"></div>
+
+      <!-- sessions list -->
+      <div id="sessionsSection"></div>
+
+      <!-- last updated -->
+      <div class="updated-row" id="updatedRow"></div>
+    </div>
+  </div>
+
+  <!-- ── Footer ─────────────────────────────── -->
+  <div class="footer">Designed & Developed by <span class="footer-name">Dheeraj</span></div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

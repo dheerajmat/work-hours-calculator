@@ -1,0 +1,90 @@
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  width: 360px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #0f172a;
+  color: #e2e8f0;
+  font-size: 13px;
+}
+.header { display:flex; align-items:center; gap:8px; padding:12px 14px 8px; }
+.header-icon { font-size:20px; }
+.header-title { font-size:16px; font-weight:700; color:#60a5fa; }
+.tabs { display:flex; gap:4px; padding:0 14px 10px; }
+.tab {
+  flex:1; padding:7px 0; border:1px solid #334155; border-radius:6px;
+  background:transparent; color:#94a3b8; font-size:12px; font-weight:600;
+  cursor:pointer; text-align:center;
+}
+.tab:hover { background:#1e293b; color:#e2e8f0; }
+.tab.active { background:#3b82f6; color:#fff; border-color:#3b82f6; }
+.view { padding:0 14px 14px; }
+.hidden { display:none !important; }
+.btn-primary {
+  width:100%; padding:11px; background:#3b82f6; color:#fff; border:none;
+  border-radius:6px; font-size:13px; font-weight:600; cursor:pointer;
+}
+.btn-primary:hover { background:#2563eb; }
+.btn-primary:disabled { background:#475569; cursor:not-allowed; }
+.status-msg { padding:8px; border-radius:6px; font-size:12px; margin-top:8px; display:none; }
+.status-msg.success { display:block; background:#059669; color:#fff; }
+.status-msg.error { display:block; background:#dc2626; color:#fff; }
+.loading { display:flex; align-items:center; gap:8px; justify-content:center; padding:24px 0; color:#94a3b8; }
+.spinner { width:18px; height:18px; border:2px solid #334155; border-top-color:#3b82f6; border-radius:50%; animation:spin .6s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.error-box { background:#7f1d1d; border:1px solid #dc2626; border-radius:6px; padding:8px 10px; font-size:12px; color:#fca5a5; }
+.emp-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+.emp-name { font-weight:700; font-size:13px; color:#f1f5f9; }
+.badge { font-size:10px; font-weight:700; padding:3px 8px; border-radius:99px; }
+.badge-green { background:#064e3b; color:#34d399; }
+.badge-slate { background:#1e293b; color:#94a3b8; }
+.stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:10px; }
+.stat-card {
+  background:#1e293b; border:1px solid #334155; border-radius:8px; padding:8px 10px;
+}
+.stat-label { font-size:10px; color:#94a3b8; margin-bottom:2px; }
+.stat-value { font-size:18px; font-weight:800; line-height:1.2; }
+.stat-sub { font-size:10px; color:#64748b; margin-top:1px; }
+.c-blue { color:#60a5fa; }
+.c-green { color:#34d399; }
+.c-amber { color:#fbbf24; }
+.c-red { color:#f87171; }
+.c-purple { color:#a78bfa; }
+.goal-box {
+  background:#1e293b; border:1px solid #334155; border-radius:8px;
+  padding:8px 10px; margin-bottom:10px;
+}
+.goal-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+.goal-label { font-size:11px; color:#94a3b8; }
+.goal-val { font-size:13px; font-weight:700; }
+.progress-bg { height:6px; background:#334155; border-radius:99px; overflow:hidden; }
+.progress-fill { height:100%; border-radius:99px; transition:width .3s; }
+.sess-title { font-size:11px; font-weight:700; color:#94a3b8; margin-bottom:6px; }
+.sess-item {
+  display:flex; align-items:center; justify-content:space-between;
+  background:#1e293b; border:1px solid #334155; border-radius:6px;
+  padding:6px 8px; margin-bottom:4px;
+}
+.sess-num {
+  width:20px; height:20px; border-radius:50%; background:#3b82f620;
+  border:1px solid #3b82f650; display:flex; align-items:center;
+  justify-content:center; font-size:10px; font-weight:700; color:#60a5fa;
+  margin-right:6px; flex-shrink:0;
+}
+.sess-times { font-family:monospace; font-size:11px; color:#cbd5e1; }
+.sess-dur { font-size:11px; font-weight:700; color:#60a5fa; }
+.updated-row { text-align:center; font-size:10px; color:#475569; padding-top:6px; }
+.open-btns { display:flex; gap:6px; margin-top:10px; }
+.btn-open {
+  flex:1; padding:9px 0; border:none; border-radius:6px;
+  font-size:12px; font-weight:600; cursor:pointer; text-align:center;
+}
+.btn-open:disabled { opacity:.5; cursor:not-allowed; }
+.btn-v1 { background:#059669; color:#fff; }
+.btn-v1:hover { background:#047857; }
+.btn-v2 { background:#7c3aed; color:#fff; }
+.btn-v2:hover { background:#6d28d9; }
+.footer {
+  text-align:center; font-size:10px; color:#475569;
+  padding:10px 14px 12px; border-top:1px solid #1e293b;
+}
+.footer-name { color:#60a5fa; font-weight:700; }

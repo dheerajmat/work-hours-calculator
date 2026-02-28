@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test ERP Page - Attendance Data</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f0f0f0;
+    }
+    h1 {
+      color: #333;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background: #3b82f6;
+      color: white;
+    }
+    .info {
+      background: #e0f2fe;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Test ERP Attendance Page</h1>
+  
+  <div class="info">
+    <strong>📝 Instructions:</strong>
+    <ol>
+      <li>This is a test page with sample attendance data</li>
+      <li>Install the Chrome extension</li>
+      <li>Click the extension icon</li>
+      <li>Click "Copy Attendance Data"</li>
+      <li>The data below should be copied to clipboard</li>
+      <li>Paste it in the Work Hours Calculator to test!</li>
+    </ol>
+  </div>
+
+  <h2>Attendance Records</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Employee Name</th>
+        <th>Type</th>
+        <th>Date & Time</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Dheeraj Deepak Mathur</td>
+        <td>IN</td>
+        <td>19-01-2026 10:54:14</td>
+        <td>Approved</td>
+      </tr>
+      <tr>
+        <td>Dheeraj Deepak Mathur</td>
+        <td>OUT</td>
+        <td>19-01-2026 15:31:15</td>
+        <td>Approved</td>
+      </tr>
+      <tr>
+        <td>Dheeraj Deepak Mathur</td>
+        <td>IN</td>
+        <td>19-01-2026 16:10:48</td>
+        <td>Approved</td>
+      </tr>
+      <tr>
+        <td>Dheeraj Deepak Mathur</td>
+        <td>OUT</td>
+        <td>19-01-2026 19:00:00</td>
+        <td>Approved</td>
+      </tr>
+      <tr>
+        <td>Dheeraj Deepak Mathur</td>
+        <td>IN</td>
+        <td>20-01-2026 10:30:00</td>
+        <td>Approved</td>
+      </tr>
+      <tr>
+        <td>Dheeraj Deepak Mathur</td>
+        <td>OUT</td>
+        <td>20-01-2026 19:15:00</td>
+        <td>Approved</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="info" style="margin-top: 30px; background: #fef3c7;">
+    <strong>✅ Expected Result (table section):</strong>
+    <p>When you click the extension on this page, it should copy the table data above.</p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- Frappe / ERPNext mock – mirrors the real Employee Checkin  -->
+  <!-- list view DOM so the extension can be tested locally.      -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <h2 style="margin-top:40px">Frappe / ERPNext Mock (Employee Checkin list)</h2>
+  <div class="info" style="background:#f0fdf4">
+    <strong>🧪 This section mimics the real ERPNext page DOM.</strong>
+    Open this file in Chrome, click the extension → it should extract the rows below.
+  </div>
+
+  <style>
+    .list-row-container { border-bottom: 1px solid #ddd; padding: 8px 0; background:#fff; }
+    .list-row { display:flex; gap:16px; align-items:center; padding:4px 12px; }
+    .list-row-col { min-width:160px; font-size:14px; }
+    .list-subject a { font-weight:600; color:#1d4ed8; text-decoration:none; }
+  </style>
+
+  <!-- Header row (not a .list-row-container, so extractor skips it) -->
+  <div style="display:flex;gap:16px;padding:6px 12px;background:#3b82f6;color:#fff;font-weight:600;font-size:13px;">
+    <div style="min-width:160px">Employee Name</div>
+    <div style="min-width:80px">Log Type</div>
+    <div style="min-width:180px">Time</div>
+    <div style="min-width:100px">Status</div>
+  </div>
+
+  <!-- Data rows – each is a .list-row-container just like Frappe renders -->
+  <div class="list-row-container">
+    <div class="list-row">
+      <div class="list-row-col list-subject"><a href="#">Abraham Arul Naicker</a></div>
+      <div class="list-row-col"><span>IN</span></div>
+      <div class="list-row-col"><span>28-02-2026 10:46:48</span></div>
+      <div class="list-row-col"><span>Approved</span></div>
+    </div>
+  </div>
+
+  <div class="list-row-container">
+    <div class="list-row">
+      <div class="list-row-col list-subject"><a href="#">Abraham Arul Naicker</a></div>
+      <div class="list-row-col"><span>OUT</span></div>
+      <div class="list-row-col"><span>27-02-2026 19:32:10</span></div>
+      <div class="list-row-col"><span>Approved</span></div>
+    </div>
+  </div>
+
+  <div class="list-row-container">
+    <div class="list-row">
+      <div class="list-row-col list-subject"><a href="#">Abraham Arul Naicker</a></div>
+      <div class="list-row-col"><span>IN</span></div>
+      <div class="list-row-col"><span>27-02-2026 10:53:20</span></div>
+      <div class="list-row-col"><span>Approved</span></div>
+    </div>
+  </div>
+
+  <div class="list-row-container">
+    <div class="list-row">
+      <div class="list-row-col list-subject"><a href="#">Abraham Arul Naicker</a></div>
+      <div class="list-row-col"><span>OUT</span></div>
+      <div class="list-row-col"><span>26-02-2026 19:16:46</span></div>
+      <div class="list-row-col"><span>Approved</span></div>
+    </div>
+  </div>
+
+  <div class="list-row-container">
+    <div class="list-row">
+      <div class="list-row-col list-subject"><a href="#">Abraham Arul Naicker</a></div>
+      <div class="list-row-col"><span>IN</span></div>
+      <div class="list-row-col"><span>26-02-2026 10:54:29</span></div>
+      <div class="list-row-col"><span>Approved</span></div>
+    </div>
+  </div>
+
+  <div class="info" style="margin-top:20px;background:#fef3c7">
+    <strong>✅ Expected output from Frappe mock rows:</strong>
+    <pre style="background:white;padding:10px;border-radius:5px;font-size:12px">Abraham Arul Naicker
+IN
+28-02-2026 10:46:48
+Approved
+1 h
+0
+·
+
+Abraham Arul Naicker
+OUT
+27-02-2026 19:32:10
+...(and so on)</pre>
+  </div>
+</body>
+</html>
