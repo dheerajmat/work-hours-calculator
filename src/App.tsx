@@ -45,6 +45,24 @@ function App() {
   // Summary Report state
   const [showSummaryReport, setShowSummaryReport] = useState(false);
 
+  // Load data from URL hash if present (from Chrome extension)
+  // Extension opens: https://.../#data=BASE64_ENCODED_LOG_DATA
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash.startsWith('#data=')) {
+      try {
+        const encoded = hash.slice(6);
+        const decoded = decodeURIComponent(escape(atob(encoded)));
+        if (decoded.trim()) {
+          setRawText(decoded);
+          window.history.replaceState(null, '', window.location.pathname);
+        }
+      } catch (e) {
+        console.error('Failed to decode URL data:', e);
+      }
+    }
+  }, []);
+
   // Load ERP config on mount
   useEffect(() => {
     const config = loadERPConfig();
@@ -63,12 +81,12 @@ function App() {
     localStorage.setItem(STORAGE_KEYS.GRID_VIEW, gridView.toString());
   }, [gridView]);
 
-  // Auto-parse on mount if there's saved data
+  // Auto-parse when rawText has data (on mount, or when loaded from URL hash)
   useEffect(() => {
     if (rawText.trim()) {
       handleParse();
     }
-  }, []); // Run only once on mount
+  }, [rawText]); // Re-run when rawText changes (e.g. from URL hash)
 
   // Auto-refresh every 1 second if there's data (for live "Now" updates with seconds)
   useEffect(() => {
